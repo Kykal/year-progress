@@ -15,3 +15,8 @@ Libraries that have been used in this project.
 2. [styled-components](https://styled-components.com/)
 
 # How to use
+1. Just enter the [website](https://kykal.github.io/year-progress/)!
+2. By clicking the percentage it will change the way it shows up to three times:
+    - Integer: 44%
+    - Short: 44.66%
+    - Long:  44.657534246575345%
