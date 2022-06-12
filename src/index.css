@@ -1,3 +1,11 @@
+:root {
+	--green:	rgb(23, 211, 109);
+	--blue:	rgb(86, 194, 234);
+	--black:	rgb(28, 30, 38);
+
+	--white: rgb(240, 242, 244);
+}
+
 * {
 	font-family: Roboto;
 
@@ -5,4 +13,13 @@
 	padding: 0;
 
 	box-sizing: border-box;
+}
+
+body, html {
+	background-color: var(--black);
+	color: var(--white);
+}
+
+#root {
+	position: relative;
 }
