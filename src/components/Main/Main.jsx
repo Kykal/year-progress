@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
+
 //Styled components
 import style from 'styled-components';
 
@@ -29,10 +30,6 @@ const Progress = style.progress`
 	height: 1em;
 
 	border: none;
-
-	progress::-webkit-progress-bar {
-		background-color: yellow;
-	}
 `;
 
 const PercentageText = style.abbr`
@@ -43,8 +40,14 @@ const PercentageText = style.abbr`
 
 //Main component content
 const Main = ({date}) => {
-
+	
 	const [ percentageCounter, setPercentageCounter ] = useState(0);
+
+	//Once website loads, change title to actual percentage
+	useEffect( () => {
+		document.title = `Year progress - (${percentageInteger}%)`;
+	}, []);
+
 
 	const year = date.getYear(); //Get current year
 	const yearDays = year % 4 === 0 ? 366 : 365 ; //Find out if this year is leap-year;
