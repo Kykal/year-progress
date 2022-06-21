@@ -94,6 +94,8 @@ const Main = ({date}) => {
 			fixed: fullPercentage.toFixed(2),
 			integer: parseInt(fullPercentage)
 		});
+
+		document.title= `Year progress - (${parseInt(fullPercentage)}%)`;
 	}, []);
 
 	
