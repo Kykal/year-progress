@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import style from 'styled-components';
 
 
+//Styled components
 const StyledMain = style.main`
 	position: absolute;
 
@@ -41,55 +42,80 @@ const PercentageText = style.abbr`
 //Main component content
 const Main = ({date}) => {
 	
-	const [ percentageCounter, setPercentageCounter ] = useState(0);
+	const [ counter, setCounter ] = useState(0);
 
-	//Once website loads, change title to actual percentage
-	useEffect( () => {
-		document.title = `Year progress - (${percentageInteger}%)`;
+	const [ percentage, setPercentage] = useState({
+		full: 0,
+		fixed: 0,
+		integer: 0,
+	});
+
+	const [ currentDate, setCurrentDate ] = useState({
+		monthNumber: date.getMonth(),
+		monthName : date.toLocaleDateString('en', { month: 'long' }),
+		year: date.getFullYear(),
+		daysInYear: 0,
+		totalDaysPassed: 0
+	});
+
+	//Once website loads...
+	useEffect( () => {		
+
+		//Knows if this year is leap-year
+		const tempDaysInYear = currentDate.year % 4 === 0 ? 366 : 365;
+		let tempTotalDaysPassed = 0;
+		
+		//Iterates each month to add up total month days
+		for( let i=0; i<currentDate.monthNumber; i++ ){
+			//Declares a new date in day 0 to know its total days
+			const tempDate = new Date( currentDate.year , i+1, 0);
+			const totalDaysInMonth = tempDate.getDate();
+			tempTotalDaysPassed += totalDaysInMonth;
+		}
+
+		//Add up the days of actual month
+		tempTotalDaysPassed += (date.getDate() - 1);
+
+		
+		//Know its percentages
+		const fullPercentage = (tempTotalDaysPassed * 100 ) / tempDaysInYear ;
+
+		console.log( fullPercentage );
+
+		//Update state
+		setCurrentDate({
+			...currentDate,
+			daysInYear: tempDaysInYear,
+			totalDaysPassed: tempTotalDaysPassed
+		});
+		setPercentage({
+			...percentage,
+			full: fullPercentage,
+			fixed: fullPercentage.toFixed(2),
+			integer: parseInt(fullPercentage)
+		});
 	}, []);
 
-
-	const year = date.getYear(); //Get current year
-	const yearDays = year % 4 === 0 ? 366 : 365 ; //Find out if this year is leap-year;
-	const currentDay = date.getDate(); //Get current day of the month
-	let totalDaysPassed = 0; //Totals days counter
-	let percentage;
-
-	//Adds up total days from previous months (except the current one)
-	for( let i=0; i<date.getMonth(); i++ ) {
-											//Year,  Month, Day
-		const tempDate = new Date(`${year}, ${i+2}, 0`); //Defines a temporal date to get total days of the month. i = month position => 2 => January
-		const daysInMonth = tempDate.getDate(); //Due temporal date day is 0, it takes the last day (28/29, 30 or 31).
-
-		totalDaysPassed += daysInMonth; //Add up the total days of the month
-	}
-
-	//Add up the current day of the month 
-	totalDaysPassed += currentDay;
-
-	//Percentage of total days passed and totals days of year.
-	percentage = (totalDaysPassed * 100) / yearDays;
-	const percentageShort = percentage.toFixed(2);
-	const percentageInteger = parseInt(percentage);
-
-	//Change visual status of percentage
-	const percentageDataHandler = () => {
-		if( percentageCounter === 2 ){
-			setPercentageCounter(0);
+	
+	//Change how percentage string is displayed
+	const changePercentageDisplay = () => {
+		if( counter === 2 ){
+			setCounter(0);
 			return;
 		}
-		setPercentageCounter( prevState => prevState+1 ); //Add up 1 to previous state value
+
+		setCounter( prevState => prevState + 1 );
 	};
 
 	//Component render
 	return (
 		<StyledMain>
 			<Content>
-				<Progress value={totalDaysPassed} max={yearDays} />
-				<h5>We are at <PercentageText title={`Current day of the year is ${totalDaysPassed} of ${yearDays}`} onClick={percentageDataHandler}  >
-					{percentageCounter === 0 && percentageInteger}
-					{percentageCounter === 1 && percentageShort}
-					{percentageCounter === 2 && percentage}
+				<Progress value={currentDate.totalDaysPassed} max={currentDate.daysInYear} />
+				<h5>We are at <PercentageText title={`Current day of the year is ${currentDate.totalDaysPassed} of ${currentDate.daysInYear}`} onClick={changePercentageDisplay}  >
+					{counter === 0 && percentage.integer}
+					{counter === 1 && percentage.fixed}
+					{counter === 2 && percentage.full}
 					%
 				</PercentageText> of the year! </h5>
 			</Content>
